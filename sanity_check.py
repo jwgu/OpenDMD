@@ -19,12 +19,13 @@ def test_sd():
             dtype=torch.float16,
             generator=torch.Generator().manual_seed(123),
         )
-        prompt_embeds = encode_prompt(["a dog"], pipe.text_encoder, pipe.tokenizer)
-        negative_prompt_embeds = encode_prompt([""], pipe.text_encoder, pipe.tokenizer)
+        prompt_embeds, _ = encode_prompt(["a dog"], pipe.text_encoder, pipe.tokenizer)
+        negative_prompt_embeds, _ = encode_prompt([""], pipe.text_encoder, pipe.tokenizer)
         latents = generate_cfg(
             pipe.unet,
             pipe.scheduler,
             latents,
+            None,
             prompt_embeds,
             negative_prompt_embeds,
             num_inference_steps=50,
@@ -133,8 +134,8 @@ def test_log_pixart():
 
 
 if __name__ == "__main__":
-    # test_sd()
-    test_pixart()
+    test_sd()
+    #test_pixart()
     # ref_sd()
     # ref_pixart()
     # test_log_sd()

@@ -25,7 +25,6 @@ def encode_prompt(captions, text_encoder, tokenizer):
     is_pixart = isinstance(text_encoder, T5EncoderModel)
     if is_pixart:
         max_length = 120
-
     with torch.no_grad():
         text_inputs = tokenizer(captions, padding="max_length", max_length=max_length, truncation=True, return_tensors="pt")
         text_input_ids = text_inputs.input_ids
@@ -58,7 +57,6 @@ def forward_model(model, latents, timestep, prompt_embeds, prompt_attention_mask
 
     if isinstance_ddp(model, Transformer2DModel):
         timestep = timestep.expand(latents.shape[0])
-
     noise_pred = model(
         latents,
         timestep=timestep,
@@ -89,7 +87,7 @@ def generate_cfg(model, scheduler, latents, attention_mask, prompt_embeds, negat
             latent_model_input = latents
 
         # predict the noise residual
-        noise_pred = forward_model(model, latents=latent_model_input, timestep=t, prompt_embeds=prompt_embeds, attention_mask=attention_mask)
+        noise_pred = forward_model(model, latents=latent_model_input, timestep=t, prompt_embeds=prompt_embeds, prompt_attention_masks=attention_mask)
 
         # perform guidance
         if negative_prompt_embeds is not None:
