@@ -78,7 +78,7 @@ def parse_args():
     parser.add_argument("--gpus", default=None, type=str, help="Comma separated list of GPUs to use")
     parser.add_argument("--workers", default=1, type=int, help="Number of workers spawned per GPU (default 1)")
     parser.add_argument("--size", default=None, type=int)
-    parser.add_argument("--caption_path", default="diffusion_db_prompts.txt", type=str)
+    parser.add_argument("--caption_path", default="data/diffusion_db_prompts.txt", type=str)
     parser.add_argument("--model_id", default="runwayml/stable-diffusion-v1-5", type=str)
     parser.add_argument("--save_dir", default="data/diffusion_db_runwayml_stable-diffusion-v1-5", type=str)
     args = parser.parse_args()
@@ -110,23 +110,26 @@ def main():
 
     print("Using GPUs: ", visible_gpus)
 
-    kwargs = dict(
-        device_id=device_id,
-        job_id=job_id,
-        worker_id=i,
-        n_gpu=len(visible_gpus),
-        n_worker=num_workers,
-        caption_path=args.caption_path,
-        model_id=args.model_id,
-        save_dir=args.save_dir,
-        size=args.size,
-    )
+    
 
     jobs = {}
     for device_id in visible_gpus:
         for i in range(num_workers):
             job_id = f"GPU{device_id:02d}-{i}"
             print(f"[{job_id}] Launching worker-process...")
+
+            kwargs = dict(
+                    device_id=device_id,
+                    job_id=job_id,
+                    worker_id=i,
+                    n_gpu=len(visible_gpus),
+                    n_worker=num_workers,
+                    caption_path=args.caption_path,
+                    model_id=args.model_id,
+                    save_dir=args.save_dir,
+                    size=args.size,
+                )           
+
             p = mp.Process(target=run, kwargs=kwargs)
             jobs[job_id] = (p, device_id)
             p.start()

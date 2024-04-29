@@ -134,8 +134,8 @@ def test_log_pixart():
 
 
 if __name__ == "__main__":
-    test_sd()
-    #test_pixart()
+    # test_sd()
+    test_pixart()
     # ref_sd()
     # ref_pixart()
     # test_log_sd()
